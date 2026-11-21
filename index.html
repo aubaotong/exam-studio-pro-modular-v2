@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hệ thống Tạo Đề, Ngân Hàng Đa Môn & Chấm Thi OMR – Pro v6 (Math & Image Studio)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+</head>
+<body>
+<div id="app"></div>
+
+<div id="iw_ov">
+  <div class="iw-move-badge" id="iw_drag_handle" title="Nắm kéo để di chuyển tự do vị trí hình ảnh">✥</div>
+  <div class="iw-hd nw" data-dir="nw"></div><div class="iw-hd n" data-dir="n"></div><div class="iw-hd ne" data-dir="ne"></div><div class="iw-hd e" data-dir="e"></div>
+  <div class="iw-hd se" data-dir="se"></div><div class="iw-hd s" data-dir="s"></div><div class="iw-hd sw" data-dir="sw"></div><div class="iw-hd w" data-dir="w"></div>
+</div>
+
+<div id="iw_bar">
+  <button data-iwm="fleft" title="Nổi bên trái">
+    <img src="assets/icons/align-left.png" 
+    alt="căn lề trái" style="width:16px;height:16px;display:block">
+  </button>
+  <button data-iwm="fright"title="Nổi bên phải (Chuẩn đề thi THPT)">
+    <img src="assets/icons/align-right.png"
+    alt="căn lề phải" style="width:16px;height:16px;display:block">
+  </button>
+  <button data-iwm="center" title="Căn giữa dòng riêng">
+    <img src="assets/icons/align-center.png"
+    alt="căn lề giữa" style="width:16px;height:16px;display:block">
+  </button>
+  <button data-iwm="inline" title="Nhúng nằm cùng dòng văn bản">
+    abc <img src="assets/icons/align-inline.png"
+    alt="ảnh" style="width:16px;height:16px;display:block">
+
+  </button>
+  <span class="sep"></span>
+  <button data-iwa="togglepush" id="iw_btn_push" title="Bật/Tắt tự giãn chiều cao khung câu hỏi">↕</button>
+  <button data-iwa="sideopt" title="Đặt nhanh hình sang góc phải cạnh đáp án A,B,C,D">📐</button>
+  <span class="sep"></span>
+  <button data-iws="140">S</button><button data-iws="220">M</button><button data-iws="340">L</button>
+  <button data-iwa="ratio">
+    1:1
+  </button>
+  <span class="sep"></span>
+  <button data-iwa="rot">
+    ↻
+  </button>
+  <button data-iwa="flip">
+      ⇄
+  </button>
+  <button data-iwa="crop" id="iw_btn_crop" >
+    <img src="assets/icons/crop.png" alt="Cắt ảnh" style="width:16px;height:16px;display:block">
+  </button>
+  <button data-iwa="cap">📝Note</button><button data-iwa="border">⬜ Viền</button>
+  <button data-iwa="dup">📋</button><button data-iwa="del" style="color:var(--bad)">🗑</button>
+</div>
+
+<div id="crop_modal">
+  <div class="crop-box">
+    <div class="row sp">
+      <b>Cut</b>
+      <div class="row"><button class="btn pri" id="crop_apply">
+        <img src="assets/icons/crop-apply.png"
+        alt="căn lề phải" style="width:16px;height:16px;display:block">
+      </button><button class="btn" id="crop_cancel">✕ Đóng</button></div>
+    </div>
+    <div class="crop-stage"><canvas id="crop_cv"></canvas></div>
+  </div>
+</div>
+
+<div id="fx_modal">
+  <div class="crop-box" style="max-width:640px">
+    <div class="row sp">
+      <b>∑ Chèn / Chỉnh sửa Công thức (Toán · Lý · Hóa)</b>
+      <div class="row"><button class="btn pri" id="fx_apply">✓ Chèn công thức</button><button class="btn" id="fx_cancel">✕ Đóng</button></div>
+    </div>
+    <div class="row" style="gap:4px">
+      <button class="btn sm" data-fxins="\frac{a}{b}">Phân số</button>
+      <button class="btn sm" data-fxins="\sqrt{x}">Căn</button>
+      <button class="btn sm" data-fxins="\sqrt[n]{x}">Căn bậc n</button>
+      <button class="btn sm" data-fxins="\int_{a}^{b} f(x)\,dx">Tích phân</button>
+      <button class="btn sm" data-fxins="\lim_{x \to 0}">Giới hạn</button>
+      <button class="btn sm" data-fxins="\begin{cases} x + y = 2 \\ x - y = 0 \end{cases}">Hệ PT</button>
+      <button class="btn sm" data-fxins="\vec{F} = m\vec{a}">Vector</button>
+      <button class="btn sm" data-fxins="\ce{2H2 + O2 ->[t^\circ] 2H2O}">PT Hóa học</button>
+      <button class="btn sm" data-fxins="\ce{N2 + 3H2 <=> 2NH3}">Thuận nghịch</button>
+    </div>
+    <div class="fg">
+      <label>Mã LaTeX hoặc Hóa học (\ce{...}):</label>
+      <textarea id="fx_input" rows="3" style="font-family:monospace;font-size:14px" placeholder="VD: \frac{-b \pm \sqrt{\Delta}}{2a} hoặc \ce{Fe + 2HCl -> FeCl2 + H2 ^}"></textarea>
+    </div>
+    <div class="fg">
+      <label>Xem trước trực tiếp:</label>
+      <div id="fx_preview" style="min-height:56px;padding:12px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);font-size:16px;display:flex;align-items:center;justify-content:center"></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- HỘP THOẠI TẠO BẢNG CHUẨN WORD (CHỌN DÒNG x CỘT HOẶC DÁN EXCEL) -->
+<div id="tbl_modal" class="modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.6);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(3px)">
+  <div class="crop-box" style="max-width:540px;width:95%;background:var(--card);border-radius:12px;padding:20px;box-shadow:var(--shadow-lg);border:1px solid var(--bd)">
+    <div class="row sp" style="margin-bottom:12px;border-bottom:1px solid var(--bd);padding-bottom:10px">
+      <b style="font-size:16px;color:var(--pri);display:flex;align-items:center;gap:6px">📊 Chèn Bảng Số Liệu (Chuẩn Word / Excel)</b>
+      <button class="btn sm" id="tbl_cancel" type="button">✕ Đóng</button>
+    </div>
+
+    <!-- Tab 1: Tạo theo số dòng/cột -->
+    <div style="background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:12px;margin-bottom:12px">
+      <div style="font-weight:700;font-size:13px;margin-bottom:8px;color:var(--tx)">1. Chọn số dòng & số cột</div>
+      <div class="row" style="gap:16px;margin-bottom:8px">
+        <div class="fg" style="flex:1">
+          <label>Số dòng (Rows):</label>
+          <input type="number" id="tbl_rows" min="1" max="50" value="3" style="width:100%">
+        </div>
+        <div class="fg" style="flex:1">
+          <label>Số cột (Columns):</label>
+          <input type="number" id="tbl_cols" min="1" max="20" value="4" style="width:100%">
+        </div>
+      </div>
+      <div class="row" style="gap:8px;align-items:center">
+        <label style="font-size:12.5px;display:flex;align-items:center;gap:6px;cursor:pointer">
+          <input type="checkbox" id="tbl_has_hdr" checked> Dòng đầu là Tiêu đề (Header in đậm)
+        </label>
+        <button class="btn pri" id="tbl_apply_grid" type="button" style="margin-left:auto">+ Tạo bảng ngay</button>
+      </div>
+    </div>
+
+    <!-- Tab 2: Dán trực tiếp từ Excel / Word -->
+    <div style="background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:12px">
+      <div style="font-weight:700;font-size:13px;margin-bottom:4px;color:var(--tx)">2. Hoặc Dán dữ liệu từ Word / Excel / Google Sheets</div>
+      <small style="color:var(--mut);display:block;margin-bottom:8px">Bạn có thể bôi đen bảng trong Word/Excel, bấm Ctrl+C rồi dán thẳng vào ô câu hỏi, hoặc dán vào khung bên dưới để chuyển thành bảng:</small>
+      <textarea id="tbl_paste_input" rows="4" style="width:100%;font-size:12px;font-family:monospace" placeholder="Dán vùng dữ liệu copy từ Excel vào đây (phân tách bởi tab hoặc dấu phẩy)..."></textarea>
+      <div class="row sp" style="margin-top:8px">
+        <button class="btn sm" id="tbl_clear_paste" type="button">Xóa trắng</button>
+        <button class="btn ok" id="tbl_apply_paste" type="button">📥 Nhập bảng từ dữ liệu dán</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HỘP THOẠI HƯỚNG DẪN PHÍM TẮT -->
+<div id="shortcut_modal" class="modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.6);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(3px)">
+  <div class="crop-box" style="max-width:480px;width:95%;background:var(--card);border-radius:12px;padding:20px;box-shadow:var(--shadow-lg);border:1px solid var(--bd)">
+    <div class="row sp" style="margin-bottom:12px;border-bottom:1px solid var(--bd);padding-bottom:10px">
+      <b style="font-size:16px;color:var(--pri)">⌨️ Danh sách Phím tắt Soạn thảo</b>
+      <button class="btn sm" id="shortcut_close" type="button">✕ Đóng</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:13px">
+      <div><span class="kbd">Ctrl + Z</span> : Hoàn tác (Undo)</div>
+      <div><span class="kbd">Ctrl + Y</span> : Làm lại (Redo)</div>
+      <div><span class="kbd">Ctrl + B</span> : In đậm (Bold)</div>
+      <div><span class="kbd">Ctrl + I</span> : In nghiêng (Italic)</div>
+      <div><span class="kbd">Ctrl + U</span> : Gạch chân (Underline)</div>
+      <div><span class="kbd">Ctrl + V</span> : Dán văn bản/bảng/ảnh</div>
+      <div><span class="kbd">Delete</span> : Xóa đối tượng/ảnh đã chọn</div>
+      <div><span class="kbd">Esc</span> : Đóng hộp thoại / Bỏ chọn ảnh</div>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="fi" accept="image/*" hidden>
+<input type="file" id="gf" accept=".pdf,image/*" multiple hidden>
+<input type="file" id="libf" accept=".json" hidden>
+<div id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/mhchem.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+<!-- Khối Script Modules được chia nhỏ theo từng chức năng -->
+<script src="js/state.js"></script>
+<script src="js/katex-mathml.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/prompt-studio.js"></script>
+<script src="js/exam-export.js"></script>
+<script src="js/omr-grading.js"></script>
+<script src="js/image-studio.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
