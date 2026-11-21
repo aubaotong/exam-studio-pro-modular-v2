@@ -34,4 +34,4 @@ const hash=s=>{let h=0;for(let i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))|0;ret
 const sig=e=>hash(JSON.stringify([e.p1,e.p2,e.tn]));
 const hasVisual=s=>/<(svg|img|table)\b/i.test(s||'');
 const hasMath=s=>/class="fx"|\$[^\$]+\$|\\ce\{|\\frac\{|\\sqrt\{|\\int\b|\\lim\b/i.test(s||'');
-const II=t=>`<button type="button" class="ii" data-a="info" data-t="${esc(t)}" title="${esc(t)}" aria-label="${esc(t)}">ⓘ</button>`;
+const II=t=>`<button type="button" class="ii" data-a="info" data-t="${esc(t)}" title="${esc(t)}" aria-label="${esc(t)}">${icon('info',14)}</button>`;

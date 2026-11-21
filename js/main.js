@@ -2,13 +2,14 @@
 function render(){
   hideIwOverlay(); const e=E(),y=scrollY;
   $('#app').innerHTML=`<aside class="side">
-    <button class="btn pri" data-a="new">+ Đề mới</button>
-    <button class="btn ${tab==='lib'?'ok':''}" data-a="tab" data-i="lib">🌐 Thư viện (${LIB.length})</button>
+    <button class="btn pri" data-a="new">${icon('plus',16)}<span>Đề mới</span></button>
+    <button class="btn ${tab==='lib'?'ok':''}" data-a="tab" data-i="lib">${icon('library',16)}<span>Thư viện (${LIB.length})</span></button>
     <hr style="border:0;border-top:1px solid var(--bd);width:100%">
     <small style="color:var(--mut);font-weight:700;padding:0 4px">DANH SÁCH ĐỀ (${DB.length})</small>
     ${DB.map(x=>`<button class="it ${x.id===cur?'on':''}" data-a="pick" data-i="${x.id}"><b>${esc(x.name)}</b><small>${esc(x.subj)} · ${x.p1.length+x.p2.length+x.tn.length+x.p3.length} câu (${+total(x).toFixed(2)}đ)</small></button>`).join('')}
   </aside>
-  <main>${e?head(e)+(tab==='edit'?editor(e):tab==='lib'?libView(e):tab==='codes'?codesView(e):tab==='sheet'?sheetView(e):gradeView(e)):'<div class="empty">📝 Bấm <b>+ Đề mới</b> để bắt đầu</div>'}</main>`;
+  <main>${e?head(e)+(tab==='edit'?editor(e):tab==='lib'?libView(e):tab==='codes'?codesView(e):tab==='sheet'?sheetView(e):gradeView(e)):`<div class="empty">${icon('file-text',32)}<p style="margin-top:10px">Bấm <b>+ Đề mới</b> để bắt đầu</p></div>`}</main>`;
+  lucideHydrate($('#app'));
   scrollTo(0,y);
 }
 
